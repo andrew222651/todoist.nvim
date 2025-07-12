@@ -43,7 +43,7 @@ Make sure your nodejs provider works (`:checkhealth` to confirm).
 
 ## Usage
 
-`:Todoist [project_name]` (default: `Inbox`. Creates project if it doesn't exist)
+`:Todoist [project_name [query]]` (default project: `Inbox`. Creates project if it doesn't exist)
 
 ### Mappings
 
@@ -108,3 +108,13 @@ Clap todoist
 ```
 
 ![alt text](./static/clap-integration.png)
+
+
+## Development
+
+Install from working copy: <https://github.com/junegunn/vim-plug#:~:text=%27%20%7D%0A%0A%22-,Unmanaged,-plugin%20(manually%20installed>
+
+Logging to file:
+```
+fs.appendFileSync('/tmp/todoist-log.txt', '\nHello world')
+```

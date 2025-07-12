@@ -61,7 +61,7 @@ function lineToItemIndex(lineNumber) {
  */
 
 function renderHeader(state) {
-  const { currentProjectName, currentProject = {} } = state
+  const { currentProjectName, currentProject = {}, currentQuery } = state
 
   const titleHl =
     currentProject.color === 48 && currentProjectName === 'Inbox' ?
@@ -72,7 +72,9 @@ function renderHeader(state) {
 
   const title = [{
     hl: titleHl,
-    text: ` ${currentProjectName} (${state.items.length} tasks) `,
+    text: currentQuery ?
+      ` ${currentProjectName} [${currentQuery}] (${state.items.length} tasks) ` :
+      ` ${currentProjectName} (${state.items.length} tasks) `,
   }]
 
   const errorMessage = state.errorMessage ?

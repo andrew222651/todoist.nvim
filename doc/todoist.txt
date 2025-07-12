@@ -47,7 +47,7 @@ REQUIREMENTS                                             *todoist-requirements*
 
 USAGE                                                           *todoist-usage*
 
-`:Todoist [project_name]`
+`:Todoist [project_name [query]]`
 If no project name is given, the default (`INBOX`) will be used.
 
 MAPPINGS                                                     *todoist-mappings*

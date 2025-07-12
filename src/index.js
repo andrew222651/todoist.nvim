@@ -5,7 +5,11 @@
 const fs = require('fs')
 const Color = require('color')
 const merge = require('deepmerge')
+// https://developer.todoist.com/sync/v9
 const Todoist = require('todoist').Todoist
+// https://developer.todoist.com/api/v1
+// note: this package, unlike the above one, uses camelCase
+const { TodoistApi } = require('@doist/todoist-api-typescript')
 const render = require('./render')
 const { processItems } = require('./models')
 const k = require('./constants')
@@ -53,22 +57,28 @@ const state = {
 
   currentProjectName: undefined,
   currentProject: undefined,
+  currentQuery: undefined,
   projects: [],
   items: [],
 }
 
 let nvim = undefined
 let todoist = undefined
+let todoist2 = undefined
 let didSetup = false
 
 
-async function initialize(currentProjectName) {
+async function initialize(...args) {
+  const currentProjectName = args ? args[0] : undefined
+  const query = (args.length > 1)? args.slice(1).join(' ').trim() : ''
+
   state.options = merge(defaultOptions, await nvim.eval('get(g:, "todoist", {})'))
   if (state.options.key)
     deprecated(k.DEPRECATED_KEY)
   state.options.key = state.options.key || process.env.TODOIST_API_KEY
   state.isLoading = state.options.key ? true : false
   state.currentProjectName = currentProjectName || state.options.defaultProject
+  state.currentQuery = query
 
   if (!state.options.key) {
     setErrorMessage([
@@ -83,6 +93,7 @@ async function initialize(currentProjectName) {
 
   if (state.options.key) {
     todoist = Todoist(state.options.key)
+    todoist2 = new TodoistApi(state.options.key)
     await setupColors()
     refreshOptions = { sync: true, create: true }
   }
@@ -90,12 +101,41 @@ async function initialize(currentProjectName) {
   await refresh(refreshOptions)
 }
 
+async function getFilteredTaskIds(query) {
+  let resp = undefined
+  let all_results = []
+  while (!resp || resp.next_cursor) {
+    if (resp) {
+      resp = await todoist2.getTasksByFilter({
+        query,
+        cursor: resp.next_cursor
+      })
+    } else {
+      resp = await todoist2.getTasksByFilter({query})
+    }
+    all_results = all_results.concat(resp.results)
+  }
+  return new Set(all_results.map(task => task.id))
+}
+
 async function refresh(options = { sync: sync = false, create: create = false }) {
   if (options.sync)
     await todoist.sync()
 
+  if (state.currentQuery) {
+    try {
+      var filteredIds = await getFilteredTaskIds(state.currentQuery)
+    } catch (err) {
+      setErrorMessage(err.toString())
+      return
+    }
+    setErrorMessage()
+    var items    = todoist.items.get().filter(i => filteredIds.has(i.v2_id))
+  } else {
+    var items    = todoist.items.get()
+  }
+
   const projects = todoist.projects.get()
-  const items    = todoist.items.get()
 
   if (options.create && !projects.some(p => p.name === state.currentProjectName))
     await todoist.projects.add({ name: state.currentProjectName })
@@ -524,7 +564,7 @@ module.exports = plugin => {
 
   _command('Todoist', pcall(initialize), {
     sync: false,
-    nargs: '?',
+    nargs: '*',
     complete: 'customlist,Todoist__completeProjects',
   })
   _command('TodoistEval', pcall(input => eval(input)), { sync: false, nargs: 1 })
