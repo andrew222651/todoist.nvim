@@ -149,7 +149,7 @@ function renderDueDate(state, due) {
     isThisWeek(date) ? 'todoistDateThisWeek' :
                        'todoistDate'
 
-  return { hl, text: `(${due.date})` }
+  return { hl, text: `(${due.string})` }
 }
 
 /*

@@ -464,13 +464,13 @@ async function onChangeDate() {
   const index = await getCurrentItemIndex()
   const currentItem = state.items[index]
 
-  const date = await input('Question', 'Date: ')
-  if (!date)
-    return
+  const date = currentItem.due ?
+    await input('Question', 'Date: ', currentItem.due.string) :
+    await input('Question', 'Date: ')
 
   const patch = {
     id: currentItem.id,
-    due: { string: date },
+    due: date ? { string: date } : null,
   }
 
   console.log('change-date', patch)
