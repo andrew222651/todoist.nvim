@@ -45,5 +45,8 @@ function sortChildrenRecursive(items) {
 }
 
 function compareByOrder(a, b) {
+  if (a.priority !== b.priority) {
+    return b.priority - a.priority
+  }
   return a.child_order - b.child_order
 }
