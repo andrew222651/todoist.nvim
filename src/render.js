@@ -102,6 +102,7 @@ function renderItem(state, i) {
     renderIndent(state, i),
     renderCheckbox(state, i),
     renderContent(state, i),
+    renderLabels(state, i),
     { hl: 'todoistSeparator', text: ' ' },
     renderDueDate(state, i.due)
   ]
@@ -134,6 +135,16 @@ function renderContent(state, i) {
   return {
     hl: 'todoistContent' + (i.checked ? 'Completed' : ''),
     text: i.content,
+  }
+}
+
+function renderLabels(state, i) {
+  if (!i.labels || i.labels.length === 0) {
+    return { hl: 'todoistLabels', text: '' }
+  }
+  return {
+    hl: 'todoistLabels',
+    text: ' ' + i.labels.map(l => '@' + l).join(' '),
   }
 }
 

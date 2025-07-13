@@ -23,6 +23,7 @@ const mappings = [
   'nnoremap <buffer><silent> >    :call Todoist__onIndent()<CR>',
   'nnoremap <buffer><silent> cc   :call Todoist__onChangeContent()<CR>',
   'nnoremap <buffer><silent> cd   :call Todoist__onChangeDate()<CR>',
+  'nnoremap <buffer><silent> cl   :call Todoist__onChangeLabels()<CR>',
   'nnoremap <buffer><silent> r    :call Todoist__onRefresh()<CR>',
   'nnoremap <buffer><silent> pdd  :call Todoist__onProjectArchive()<CR>',
   'nnoremap <buffer><silent> pDD  :call Todoist__onProjectDelete()<CR>',
@@ -118,8 +119,11 @@ async function getFilteredTaskIds(query) {
   return new Set(all_results.map(task => task.id))
 }
 
-async function refresh(options = { sync: sync = false, create: create = false }) {
+async function refresh(options = { sync: sync = true, create: create = false }) {
   if (options.sync)
+    // for some reason, after some update operations we would be missing items
+    // unless we use this sync token
+    todoist.syncToken.set("*")
     await todoist.sync()
 
   if (state.currentQuery) {
@@ -467,6 +471,9 @@ async function onChangeDate() {
   const date = currentItem.due ?
     await input('Question', 'Date: ', currentItem.due.string) :
     await input('Question', 'Date: ')
+  if (typeof date === 'undefined') {
+    return
+  }
 
   const patch = {
     id: currentItem.id,
@@ -487,6 +494,41 @@ async function onChangeDate() {
 
   await refresh()
 }
+
+async function onChangeLabels() {
+  const index = await getCurrentItemIndex()
+  const currentItem = state.items[index]
+
+  const inputLabels = await input(
+    'Question',
+    'Labels (space separated): ',
+    currentItem.labels.join(' ')
+  )
+  if (typeof inputLabels === 'undefined') {
+    return
+  }
+  const newLabels = inputLabels.split(' ').map(l => l.trim()).filter(l => l)
+
+  const patch = {
+    id: currentItem.id,
+    labels: newLabels,
+  }
+
+  console.log('change-labels', patch)
+
+  try {
+    currentItem.loading = true
+    await render.line(nvim, state, index)
+    await todoist.items.update(patch)
+    setErrorMessage()
+  } catch(err) {
+    currentItem.loading = false
+    setErrorMessage(err.message)
+  }
+
+  await refresh()
+}
+
 
 async function onProjectArchive() {
   if (!todoist.state.user.is_premium)
@@ -576,6 +618,7 @@ module.exports = plugin => {
   _function('Todoist__onUnindent',           pcall(onUnindent),           { sync: false })
   _function('Todoist__onChangeContent',      pcall(onChangeContent),      { sync: false })
   _function('Todoist__onChangeDate',         pcall(onChangeDate),         { sync: false })
+  _function('Todoist__onChangeLabels',       pcall(onChangeLabels),       { sync: false })
   _function('Todoist__onChangePriority',     pcall(onChangePriority),     { sync: false })
   _function('Todoist__onRefresh',            pcall(onRefresh),            { sync: false })
   _function('Todoist__onProjectArchive',     pcall(onProjectArchive),     { sync: false })

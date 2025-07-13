@@ -67,6 +67,7 @@ call s:hl('todoistPri2',             '#EB8909')
 call s:hl('todoistPri3',             '#246FE0')
 call s:hl('todoistContent',          '',      '',        'bold')
 call s:hl('todoistContentCompleted', '',      '',        'strikethrough')
+call s:hl('todoistLabels',           '#C0C0C0')
 
 hi def link todoistCheckbox    Delimiter
 hi def link todoistDate        Comment

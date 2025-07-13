@@ -61,6 +61,9 @@ cc                      Change the current tasks' text.
                                                *todoist_cd*
 cd                      Change the current task date (see |todoist-other|).
 
+                                               *todoist_cl*
+cl                      Change the current task labels.
+
                                                *todoist_DD*
 DD                      Delete the current task.
 

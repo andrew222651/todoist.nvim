@@ -47,25 +47,29 @@ Make sure your nodejs provider works (`:checkhealth` to confirm).
 
 ### Mappings
 
-|Keys|Effect|
-|---|---|
-|`x`|Toggle current task completion|
-|`cc`|Change current task text|
-|`cd`|Change current task date ([date formats](https://get.todoist.help/hc/en-us/articles/205325931-Due-Dates-Times))|
-|`p1`|Make task Priority 1|
-|`p2`|Make task Priority 2|
-|`p3`|Make task Priority 3|
-|`p4`|Make task Priority 4|
-|`DD`|Delete current task|
-|`O`|Add new task before|
-|`o`|Add new task after|
-|`<`|Unindent|
-|`>`|Indent|
-|`r`|Refresh|
-|`pcc`|Change current project color|
-|`pcn`|Change current project name|
-|`pdd`|Archive current project *premium users only :/*|
-|`pDD`|Delete current project|
+| Keys  | Effect                                                                                                          |
+|-------|-----------------------------------------------------------------------------------------------------------------|
+| `x`   | Toggle current task completion                                                                                  |
+| `cc`  | Change current task text                                                                                        |
+| `cd`  | Change current task date ([date formats](https://get.todoist.help/hc/en-us/articles/205325931-Due-Dates-Times)) |
+| `cl`  | Change current task labels                                                                                      |
+| `p1`  | Make task Priority 1                                                                                            |
+| `p2`  | Make task Priority 2                                                                                            |
+| `p3`  | Make task Priority 3                                                                                            |
+| `p4`  | Make task Priority 4                                                                                            |
+| `DD`  | Delete current task                                                                                             |
+| `O`   | Add new task before                                                                                             |
+| `o`   | Add new task after                                                                                              |
+| `<`   | Unindent                                                                                                        |
+| `>`   | Indent                                                                                                          |
+| `r`   | Refresh                                                                                                         |
+| `pcc` | Change current project color                                                                                    |
+| `pcn` | Change current project name                                                                                     |
+| `pdd` | Archive current project *premium users only :/*                                                                 |
+| `pDD` | Delete current project                                                                                          |
+
+Caution: Use `<c-c>` to cancel a prompt. Pressing `<esc>` submits the prompt
+with empty text.
 
 ### Options
 
