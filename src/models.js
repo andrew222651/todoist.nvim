@@ -16,6 +16,9 @@ function processItems(items) {
     }
     else {
       const parent = byId[i.parent_id]
+      if (!parent) {
+        continue
+      }
       if (!parent.children)
         parent.children = []
       parent.children.push(i)
