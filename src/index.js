@@ -182,6 +182,7 @@ async function createTodoistBuffer() {
     'setlocal nonumber',
     'setlocal signcolumn=no',
     'setlocal conceallevel=2',
+    'setlocal noswapfile',
     ...mappings,
   ])
 
